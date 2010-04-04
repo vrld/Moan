@@ -1,15 +1,12 @@
 require "moan"
 
 function love.load()
-    local gen = Moan.saw
     local len = .5
-    local dc = Moan.decrease(len)
-    local rs = Moan.increase(.01)
     local octave = 4
 
     local function note(f)
         return Moan.newSample(Moan.compress(Moan.envelope(
-            Moan.signal(gen, f, .4), 
+            Moan.signal(Moan.saw, f, .4), 
             Moan.signal(Moan.triangle, 8),
             Moan.decrease(len),
             Moan.increase(.01))), len, 44100, 16)
@@ -85,24 +82,24 @@ end
 
 -- axel foley!
 melody = {
-    {'f', .3}, {'y', .3}, {'f', .2}, {'f', .2}, {'u', .2}, {'f', .2}, {'e', .3},
-    {'f', .3}, {'k', .3}, {'f', .2}, {'f', .2}, {'o', .2}, {'k', .2}, {'y', .3},
-    {'f', .2}, {'k', .2}, {"'", .2}, {'f', .3}, {'e', .2}, {'e', .3}, {'g', .2}, {'f', .3},
+    {'f', .3}, {'y', .3}, {'f', .2}, {'f', .17}, {'u', .2}, {'f', .2}, {'e', .3},
+    {'f', .3}, {'k', .3}, {'f', .2}, {'f', .17}, {'o', .2}, {'k', .2}, {'y', .2},
+    {'f', .2}, {'k', .2}, {"'", .2}, {'f', .2}, {'e', .2}, {'e', .2}, {'g', .17}, {'f', 1},
 }
 
---function alternate(notes)
---    local melody = {}
---    for _,k in ipairs(notes) do
---        n1 = k[1]
---        for _,n2 in ipairs(k[2]) do
---            for i = 1,5 do 
---                melody[#melody+1] = {n1, .1}
---                melody[#melody+1] = {n2, .1}
---            end
---        end
---    end
---    return melody
---end
+function alternate(notes)
+    local melody = {}
+    for _,k in ipairs(notes) do
+        n1 = k[1]
+        for _,n2 in ipairs(k[2]) do
+            for i = 1,5 do 
+                melody[#melody+1] = {n1, .1}
+                melody[#melody+1] = {n2, .1}
+            end
+        end
+    end
+    return melody
+end
 --melody = alternate({
 --    {'f', {'h','j','k','l','k','j'}}, 
 --    {'d', {'h','j','k','l','k','j'}},
@@ -110,8 +107,7 @@ melody = {
 --    {'d', {'h','j','k','l','k','j'}},
 --    {'f', {'j','k','l',';','l','k'}}, 
 --    {'d', {'j','k','l',';','l','k'}}, 
---    {'e', {'j','k','l',';','l','k'}}, 
---    {'d', {'j','k','l',';','l','k'}}, 
+--    {'d', {'j','k','l',';'}}, 
 --})
 
 mp = coroutine.create(function()

@@ -173,8 +173,27 @@ function circlesynth.keyreleased(key)
         for k,w in pairs(circlesynth.waves) do
             circlesynth.waves[k] = nil
         end
+        circlesynth.wavecount = 0
     elseif key == 'w' then
         circlesynth.waves[#circlesynth.waves+1] = {pos = vector.new(400,300), radius = 1, played = {}}
         circlesynth.wavecount = circlesynth.wavecount + 1   
     end
+end
+
+function circlesynth.help()
+    return 
+[[Complicated stuff:
+- Circles represent tones.
+- The horizontal axis encodes frequency, the vertical axis encodes loudness
+- The size of a circle represents the length of the tone
+- The color shows which oscillator is used
+
+Keybindings:
+- Left-click on empty space places a tone
+- Left-click on a tone changes the oscillator
+- Right-click on a tone let's you change the tone's size
+- Middle-click on a tone deletes it
+- Middle-click on empty space spawns a wave
+- 'c' clears the board
+- 'w' starts a new wave at the center]]
 end

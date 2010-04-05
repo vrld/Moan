@@ -48,7 +48,7 @@ end
 
 local playcol = 1
 local t = 0
-local bpm = 240
+local bpm = 60
 
 function sequencer.draw()
     love.graphics.setLine(3)
@@ -84,7 +84,7 @@ end
 
 function sequencer.update(dt)
     t = t + dt
-    if t > 60/bpm then
+    if t > 15/bpm then
         t = 0
         playcol = (playcol + 1) % 17
         if playcol == 0 then playcol = 1 end
@@ -150,4 +150,14 @@ function sequencer.keyreleased(key)
             end
         end
     end
+end
+
+function sequencer.help()
+    return 
+[[- Left-click on an empty box places notes
+- Left-click on a note changes the oscillator (and the color)
+- Right-click deletes a note
+- 'c' will clear the board
+- 'a' increases BPM by 10
+- 's' decreases BPM by 10]]
 end

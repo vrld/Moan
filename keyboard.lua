@@ -149,3 +149,7 @@ function keyboard.keyreleased(key)
         keyboard.keys[key].on = false
     end
 end
+
+function keyboard.help()
+    return "Press keys according to the labels (homerow and some above on US keyboards)"
+end

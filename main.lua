@@ -65,12 +65,18 @@ local demo = {
     update = function(dt) 
         h = (h + dt * 50) % 360
         love.graphics.setBackgroundColor(hsv_to_rgb(h,.1,.7))
+    end,
+    help = function()
+        return "Click a button.\nKeyboard needs some time on first start. Be patient."
     end
 }
+
+local show_help = false
 local buttons = {
-    Button.new("keyboard",   10, 20, 120, 20, function() demo = keyboard end),
-    Button.new("circles",   140, 20, 120, 20, function() demo = circlesynth end),
-    Button.new("sequencer", 270, 20, 120, 20, function() demo = sequencer end),
+    Button.new("keyboard",   10, 20, 120, 20, function() demo = keyboard demo.load() end),
+    Button.new("circles",   140, 20, 120, 20, function() demo = circlesynth demo.load() end),
+    Button.new("sequencer", 270, 20, 120, 20, function() demo = sequencer demo.load() end),
+    Button.new("?",         400, 20, 20, 20, function() show_help = not show_help end),
 }
 function love.load()
     love.graphics.setFont(18)
@@ -80,6 +86,15 @@ function love.draw()
     demo.draw()
     for _,b in ipairs(buttons) do
         b:draw()
+    end
+
+    if show_help then
+        love.graphics.setColor(255,255,255,180)
+        love.graphics.rectangle('fill', 40, 100, 720, 400)
+        love.graphics.setColor(0,0,0,255)
+        love.graphics.rectangle('line', 40, 100, 720, 400)
+        love.graphics.printf("HELP:", 50, 120, 700, 'left')
+        love.graphics.printf(demo.help(), 50, 160, 700, 'left')
     end
 end
 
@@ -104,7 +119,6 @@ function love.mousereleased(x,y,btn)
         for _,b in ipairs(buttons) do
             if b:over_button(x,y) then
                 b:onclick()
-                demo.load()
                 return
             end
         end

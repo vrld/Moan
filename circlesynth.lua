@@ -164,3 +164,14 @@ function circlesynth.mousereleased(x,y,btn)
         circlesynth.wavecount = circlesynth.wavecount + 1
     end
 end
+
+function circlesynth.keyreleased(key)
+    if key == 'c' then
+        for k,c in pairs(circlesynth.circles) do
+            circlesynth.circles[k] = nil
+        end
+        for k,w in pairs(circlesynth.waves) do
+            circlesynth.waves[k] = nil
+        end
+    end
+end

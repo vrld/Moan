@@ -1,5 +1,6 @@
 require "keyboard"
 require "circlesynth"
+require "sequencer"
 
 Button = {}
 Button.__index = Button
@@ -28,7 +29,7 @@ function Button:draw()
     love.graphics.print(self.text, self.textpos.x, self.textpos.y)
 end
 function Button:over_button(x,y)
-    return x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.w
+    return x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h
 end
 
 local function hsv_to_rgb(h,s,v)
@@ -67,8 +68,9 @@ local demo = {
     end
 }
 local buttons = {
-    Button.new("keyboard", 10, 20, 120, 20, function() demo = keyboard end),
-    Button.new("circles", 140, 20, 120, 20, function() demo = circlesynth end)
+    Button.new("keyboard",   10, 20, 120, 20, function() demo = keyboard end),
+    Button.new("circles",   140, 20, 120, 20, function() demo = circlesynth end),
+    Button.new("sequencer", 270, 20, 120, 20, function() demo = sequencer end),
 }
 function love.load()
     love.graphics.setFont(18)

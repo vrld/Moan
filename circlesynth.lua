@@ -173,5 +173,8 @@ function circlesynth.keyreleased(key)
         for k,w in pairs(circlesynth.waves) do
             circlesynth.waves[k] = nil
         end
+    elseif key == 'w' then
+        circlesynth.waves[#circlesynth.waves+1] = {pos = vector.new(400,300), radius = 1, played = {}}
+        circlesynth.wavecount = circlesynth.wavecount + 1   
     end
 end

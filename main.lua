@@ -1,148 +1,114 @@
-require "moan"
+require "keyboard"
+require "circlesynth"
 
-function love.load()
-    local len = .5
-    local octave = 4
-
-    local function note(f)
-        return Moan.newSample(Moan.compress(Moan.envelope(
-            Moan.signal(Moan.saw, f, .4), 
-            Moan.signal(Moan.triangle, 8),
-            Moan.decrease(len),
-            Moan.increase(.01))), len, 44100, 16)
-    end
-
-    samples = {
-        ["a"]  = note(Moan.pitch("c", octave)),
-        ["w"]  = note(Moan.pitch("c#", octave)),
-        ["s"]  = note(Moan.pitch("d", octave)),
-        ["e"]  = note(Moan.pitch("d#", octave)),
-        ["d"]  = note(Moan.pitch("e", octave)),
-        ["f"]  = note(Moan.pitch("f", octave)),
-        ["t"]  = note(Moan.pitch("f#", octave)),
-        ["g"]  = note(Moan.pitch("g", octave)),
-        ["y"]  = note(Moan.pitch("g#", octave)),
-        ["h"]  = note(Moan.pitch("a", octave)),
-        ["u"]  = note(Moan.pitch("a#", octave)),
-        ["j"]  = note(Moan.pitch("b", octave)),
-
-        ["k"]  = note(Moan.pitch("c", octave+1)),
-        ["o"]  = note(Moan.pitch("c#", octave+1)),
-        ["l"]  = note(Moan.pitch("d", octave+1)),
-        ["p"]  = note(Moan.pitch("d#", octave+1)),
-        [";"]  = note(Moan.pitch("e", octave+1)),
-        ["'"]  = note(Moan.pitch("f", octave+1)),
-        ["]"]  = note(Moan.pitch("f#", octave+1)), 
-        ["\\"] = note(Moan.pitch("g", octave+1)),
+Button = {}
+Button.__index = Button
+function Button.new(text, x,y, w,h, onclick)
+    local b = {
+        text = text,
+        x=x, y=y,
+        w=w, h=h,
+        onclick = onclick,
     }
 
-    keyboard = {keys = {}, drawingorder = {}}
-    local W, H = 66, 600
-    local C1, C2 = {255,255,255,255}, {201,202,228,255}
-    local function defkeys(keys, lastx)
-        local lastx = lastx or (800 - 12 * W) / 2
-        for _,k in pairs(keys) do
-            keyboard.keys[k] = {x = lastx, y = 0, w = W, h = H, color = C1, highlight = C2}
-            keyboard.drawingorder[#keyboard.drawingorder+1] = k
-            lastx = lastx + W
-        end
+    setmetatable(b, Button)
+    return b
+end
+function Button:draw()
+    if not self.textpos then
+        local font = love.graphics.getFont()
+        self.textpos = {x = self.x + (self.w - font:getWidth(self.text))/2,
+                        y = self.y + font:getHeight(self.text) - 3}
     end
-    defkeys{'a','s','d','f','g','h','j','k','l',';','\'','\\'}
-
-    H = 240
-    C1, C2  = {0,0,0,255}, {33,33,68,255}
-    defkeys({'w','e'},     keyboard.keys["a"].x + W/2)
-    defkeys({'t','y','u'}, keyboard.keys["f"].x + W/2)
-    defkeys({'o','p'},     keyboard.keys["k"].x + W/2)
-    defkeys({']'},         keyboard.keys["'"].x + W/2)
-
-    love.graphics.setBackgroundColor(0,40,0)
-    love.graphics.setFont(20)
+    love.graphics.setColor(180,180,180,180)
+    love.graphics.rectangle('fill', self.x,self.y,self.w,self.h)
     love.graphics.setLine(2)
+    love.graphics.setColor(0,0,0,180)
+    love.graphics.rectangle('line', self.x,self.y,self.w,self.h)
+    love.graphics.print(self.text, self.textpos.x, self.textpos.y)
+end
+function Button:over_button(x,y)
+    return x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.w
 end
 
-function color_unpack(c)
-    return c[1], c[2], c[3], c[4]
+local function hsv_to_rgb(h,s,v)
+    local H = h/60 
+    local Hi = math.floor(H)
+    local f = H - Hi
+    local p,q,t = v * (1 - s), v * (1 - s*f), v * (1 - s*(1-f))
+
+    if     Hi == 5 then
+        return v * 255, p * 255, q * 255
+    elseif Hi == 4 then
+        return t * 255, p * 255, v * 255
+    elseif Hi == 3 then
+        return p * 255, q * 255, v * 255
+    elseif Hi == 2 then
+        return p * 255, v * 255, t * 255
+    elseif Hi == 1 then
+        return q * 255, v * 255, p * 255
+    else -- 0 or 6
+        return v * 255, t * 255, p * 255
+    end
+end
+local h = 0
+local demo = {
+    draw = function() 
+        love.graphics.setColor(40,40,40,40)
+        for x = 0,800,60 do
+            for y = 0,600,20 do
+                love.graphics.print("Moan", x, y)
+            end
+        end
+    end, 
+    update = function(dt) 
+        h = (h + dt * 50) % 360
+        love.graphics.setBackgroundColor(hsv_to_rgb(h,.1,.7))
+    end
+}
+local buttons = {
+    Button.new("keyboard", 10, 20, 120, 20, function() demo = keyboard end),
+    Button.new("circles", 140, 20, 120, 20, function() demo = circlesynth end)
+}
+function love.load()
+    love.graphics.setFont(18)
 end
 
 function love.draw()
-    for _,k in ipairs(keyboard.drawingorder) do
-        local pad = keyboard.keys[k]
-        local c = pad.on and pad.highlight or pad.color
-        local c2 = pad.on and pad.color or pad.highlight
-
-        love.graphics.setColor(color_unpack(c))
-        love.graphics.rectangle('fill', pad.x, pad.y, pad.w, pad.h)
-
-        love.graphics.setColor(color_unpack(c2))
-        love.graphics.rectangle('line', pad.x, pad.y, pad.w, pad.h)
-        love.graphics.print(k, pad.x + 10, pad.y + pad.h - 10)
+    demo.draw()
+    for _,b in ipairs(buttons) do
+        b:draw()
     end
 end
 
--- axel foley!
-melody = {
-    {'f', .3}, {'y', .3}, {'f', .2}, {'f', .17}, {'u', .2}, {'f', .2}, {'e', .3},
-    {'f', .3}, {'k', .3}, {'f', .2}, {'f', .17}, {'o', .2}, {'k', .2}, {'y', .2},
-    {'f', .2}, {'k', .2}, {"'", .2}, {'f', .2}, {'e', .2}, {'e', .2}, {'g', .17}, {'f', 1},
-}
-
-function alternate(notes)
-    local melody = {}
-    for _,k in ipairs(notes) do
-        n1 = k[1]
-        for _,n2 in ipairs(k[2]) do
-            for i = 1,5 do 
-                melody[#melody+1] = {n1, .1}
-                melody[#melody+1] = {n2, .1}
-            end
-        end
-    end
-    return melody
-end
---melody = alternate({
---    {'f', {'h','j','k','l','k','j'}}, 
---    {'d', {'h','j','k','l','k','j'}},
---    {'e', {'h','j','k','l','k','j'}},
---    {'d', {'h','j','k','l','k','j'}},
---    {'f', {'j','k','l',';','l','k'}}, 
---    {'d', {'j','k','l',';','l','k'}}, 
---    {'d', {'j','k','l',';'}}, 
---})
-
-mp = coroutine.create(function()
-    for _,key in ipairs(melody) do
-        local s = love.audio.newSource(samples[key[1]])
-        love.audio.play(s)
-        keyboard.keys[key[1]].on = true
-        coroutine.yield(key[2])
-        keyboard.keys[key[1]].on = false
-    end
-end)
-
-local t = 0
-local hold = 0
 function love.update(dt)
-    if not hold then return end
-    t = t + dt
-    if t > hold then
-        _, hold = coroutine.resume(mp)
-        t = 0
-    end
+    demo.update(dt)
 end
 
 function love.keypressed(key)
-    if samples[key] then
-        local s = love.audio.newSource(samples[key])
-        love.audio.play(s)
-    end
-    if keyboard.keys[key] then
-        keyboard.keys[key].on = true
+    if demo.keypressed then
+        demo.keypressed(key)
     end
 end
 
 function love.keyreleased(key)
-    if keyboard.keys[key] then
-        keyboard.keys[key].on = false
+    if demo.keyreleased then
+        demo.keyreleased(key)
+    end
+end
+
+function love.mousereleased(x,y,btn)
+    if btn == 'l' then
+        for _,b in ipairs(buttons) do
+            if b:over_button(x,y) then
+                b:onclick()
+                demo.load()
+                return
+            end
+        end
+    end
+
+    if demo.mousereleased then
+        demo.mousereleased(x,y,btn)
     end
 end

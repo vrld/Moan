@@ -42,7 +42,7 @@ function Moan.newSample(gen, len, samplerate, bits, channels)
     local bits = bits or 16
     local samples = math.floor(len * samplerate)
     local data = love.sound.newSoundData(samples, samplerate, bits, channels)
-    for i = 1,samples do
+    for i = 0,samples do
         data:setSample(i, gen( i / samplerate))
     end
     return data

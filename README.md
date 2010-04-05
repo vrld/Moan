@@ -9,13 +9,13 @@ I created three demos so you can see what one can do using moan:
 
 ## Demos ##
 On startup you are presented with an ugly menu screen.
-
+- - -
 
 ### Keyboard ###
 Use your keyboard to play stuff. The characters on the keys (the virtual ones)
 denote which key you will have to press to create a tone.
 The first startup will take a little time to create all the samples. Be patient.
-
+- - -
 
 ### Circlesynth ###
 Great for annoying people.
@@ -40,14 +40,21 @@ another wave is spawned.
 
 #### The 'c' key ####
 Tired of your creation? Press 'c'!
-
+- - -
 
 ### Sequencer ###
 Place notes with your left mouse button. Multiple left-clicks will change
 the note's oscillator. Right-clicking will delete the note.
 
 Press 'c' to clear the board.
-'a'/'s' will increase/decrease the BPM.
+'a' and 's' will increase/decrease the BPM.
+- - -
 
 ## Library ##
 Soon... (or never)
+
+## Screenshots ##
+![Menu](http://github.com/vrld/Moan/raw/master/menu.png)
+![Keyboard](http://github.com/vrld/Moan/raw/master/keyboard.png)
+![Circlesynth](http://github.com/vrld/Moan/raw/master/circles.png)
+![Sequencer](http://github.com/vrld/Moan/raw/master/sequencer.png)

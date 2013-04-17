@@ -79,7 +79,7 @@ local buttons = {
 	Button.new("?",         400, 20, 20, 20, function() show_help = not show_help end),
 }
 function love.load()
-	love.graphics.setFont(18)
+	love.graphics.setFont(love.graphics.newFont(18))
 end
 
 function love.draw()
